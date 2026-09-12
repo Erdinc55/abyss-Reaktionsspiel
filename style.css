@@ -1,0 +1,421 @@
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&family=Outfit:wght@300;400;600&display=swap');
+
+:root {
+  --abyss: #06141f;
+  --deep: #0b2434;
+  --current: #14425c;
+  --cyan: #4fe3d6;
+  --magenta: #ff5fa2;
+  --amber: #ffc46b;
+  --foam: #e8f6f6;
+  --foam-dim: #7d9aa6;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--abyss);
+  color: var(--foam);
+  font-family: 'Outfit', system-ui, sans-serif;
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* --- Das Becken --- */
+
+.tank {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  background:
+    radial-gradient(120% 80% at 50% -10%, var(--current) 0%, transparent 55%),
+    linear-gradient(180deg, var(--deep) 0%, var(--abyss) 70%);
+  cursor: crosshair;
+}
+
+/* Lichtschleier von oben */
+.shaft {
+  position: absolute;
+  top: -20%;
+  width: 42vmin;
+  height: 140%;
+  background: linear-gradient(180deg, rgba(79, 227, 214, 0.09), transparent 70%);
+  filter: blur(26px);
+  pointer-events: none;
+}
+
+.shaft-a { left: 8%; transform: rotate(8deg); animation: sway 14s ease-in-out infinite; }
+.shaft-b { right: 12%; transform: rotate(-6deg); animation: sway 19s ease-in-out infinite reverse; }
+
+@keyframes sway {
+  0%, 100% { transform: translateX(0) rotate(8deg); }
+  50% { transform: translateX(28px) rotate(3deg); }
+}
+
+/* --- HUD --- */
+
+.hud {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 46px;
+  padding: 26px 20px;
+  z-index: 3;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.hud.live { opacity: 1; }
+
+.hud-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-width: 76px;
+}
+
+.hud-value {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-weight: 800;
+  font-size: 30px;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--foam);
+}
+
+.hud-label {
+  font-size: 12px;
+  font-weight: 300;
+  letter-spacing: 0.03em;
+  color: var(--foam-dim);
+}
+
+/* --- Zeitbalken --- */
+
+.fuse {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 96px;
+  width: min(320px, 60vw);
+  height: 3px;
+  background: rgba(232, 246, 246, 0.12);
+  border-radius: 3px;
+  overflow: hidden;
+  z-index: 3;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.fuse.live { opacity: 1; }
+
+.fuse span {
+  display: block;
+  height: 100%;
+  width: 100%;
+  transform-origin: left center;
+  background: linear-gradient(90deg, var(--cyan), var(--amber));
+  border-radius: 3px;
+}
+
+/* --- Das Licht (Ziel) --- */
+
+.orb {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 74px;
+  height: 74px;
+  padding: 0;
+  /* Position und Größe setzt script.js über left/top/width/height.
+     transform bleibt allein der Puls-Animation vorbehalten. */
+  transition: width 0.25s ease, height 0.25s ease;
+  border: none;
+  border-radius: 50%;
+  background: radial-gradient(circle at 36% 32%, #ffffff 0%, var(--cyan) 38%, rgba(79, 227, 214, 0.15) 72%, transparent 76%);
+  box-shadow:
+    0 0 26px rgba(79, 227, 214, 0.55),
+    0 0 70px rgba(79, 227, 214, 0.28);
+  cursor: pointer;
+  z-index: 2;
+  display: none;
+  animation: pulse 1.6s ease-in-out infinite;
+}
+
+.orb.live { display: block; }
+
+/* Kurz vor Ablauf wechselt das Licht die Farbe */
+.orb.panic {
+  background: radial-gradient(circle at 36% 32%, #ffffff 0%, var(--magenta) 38%, rgba(255, 95, 162, 0.15) 72%, transparent 76%);
+  box-shadow:
+    0 0 30px rgba(255, 95, 162, 0.6),
+    0 0 80px rgba(255, 95, 162, 0.3);
+  animation-duration: 0.5s;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+}
+
+/* --- Effekte: Welle beim Klick, Funken beim Fang --- */
+
+.ripple {
+  position: absolute;
+  border: 1px solid rgba(232, 246, 246, 0.5);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 1;
+  animation: ripple-out 0.55s ease-out forwards;
+}
+
+@keyframes ripple-out {
+  from { width: 8px; height: 8px; opacity: 0.8; }
+  to { width: 150px; height: 150px; opacity: 0; }
+}
+
+.spark {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 2;
+  animation: spark-fly 0.6s ease-out forwards;
+}
+
+@keyframes spark-fly {
+  from { transform: translate(0, 0) scale(1); opacity: 1; }
+  to { transform: translate(var(--dx), var(--dy)) scale(0.2); opacity: 0; }
+}
+
+/* Kurzer Blitz beim Fang */
+.tank.caught::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(79, 227, 214, 0.07);
+  pointer-events: none;
+  z-index: 1;
+  animation: flash 0.25s ease-out forwards;
+}
+
+@keyframes flash {
+  to { opacity: 0; }
+}
+
+/* --- Overlays --- */
+
+.veil {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: grid;
+  place-items: center;
+  padding: 28px 22px;
+  background: rgba(6, 20, 31, 0.82);
+  backdrop-filter: blur(7px);
+  overflow-y: auto;
+}
+
+.veil.hidden { display: none; }
+
+.veil-inner {
+  width: 100%;
+  max-width: 420px;
+  text-align: center;
+}
+
+h1 {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-weight: 800;
+  font-size: clamp(52px, 13vw, 82px);
+  line-height: 0.92;
+  margin: 0 0 14px;
+  letter-spacing: -0.03em;
+  background: linear-gradient(100deg, var(--cyan), var(--foam) 55%, var(--magenta));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.lede {
+  margin: 0 0 24px;
+  font-size: 16px;
+  font-weight: 300;
+  line-height: 1.55;
+  color: var(--foam-dim);
+}
+
+.rules {
+  list-style: none;
+  margin: 0 0 30px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  text-align: left;
+}
+
+.rules li {
+  position: relative;
+  padding-left: 20px;
+  font-size: 14px;
+  font-weight: 300;
+  color: var(--foam);
+}
+
+.rules li::before {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: 8px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--cyan);
+  box-shadow: 0 0 8px var(--cyan);
+}
+
+/* Endbildschirm */
+
+.verdict {
+  margin: 0 0 4px;
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--magenta);
+}
+
+.final-score {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-weight: 800;
+  font-size: clamp(56px, 15vw, 86px);
+  line-height: 1;
+  margin: 0 0 6px;
+  font-variant-numeric: tabular-nums;
+  color: var(--foam);
+}
+
+.final-meta {
+  margin: 0 0 28px;
+  font-size: 14px;
+  font-weight: 300;
+  color: var(--foam-dim);
+}
+
+.board {
+  margin-bottom: 28px;
+  text-align: left;
+}
+
+.board h2 {
+  margin: 0 0 12px;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--foam-dim);
+}
+
+.board-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  counter-reset: rank;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.board-list li {
+  counter-increment: rank;
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 9px 14px;
+  border-radius: 9px;
+  background: rgba(232, 246, 246, 0.05);
+  font-size: 14px;
+  font-weight: 300;
+  color: var(--foam-dim);
+}
+
+.board-list li::before {
+  content: counter(rank);
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-weight: 500;
+  font-size: 13px;
+  color: var(--foam-dim);
+  min-width: 14px;
+}
+
+.board-list li b {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-weight: 800;
+  font-size: 17px;
+  color: var(--foam);
+  font-variant-numeric: tabular-nums;
+}
+
+.board-list li.fresh {
+  background: rgba(79, 227, 214, 0.12);
+  color: var(--foam);
+}
+
+.board-empty {
+  font-size: 14px;
+  font-weight: 300;
+  color: var(--foam-dim);
+}
+
+/* --- Buttons --- */
+
+.action {
+  font-family: 'Outfit', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--abyss);
+  background: var(--cyan);
+  border: none;
+  border-radius: 999px;
+  padding: 15px 34px;
+  cursor: pointer;
+  box-shadow: 0 0 28px rgba(79, 227, 214, 0.35);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.action:hover,
+.action:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: 0 0 40px rgba(79, 227, 214, 0.55);
+}
+
+:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 3px;
+}
+
+/* --- Kleinere Bildschirme --- */
+
+@media (max-width: 520px) {
+  .hud { gap: 24px; padding: 20px 12px; }
+  .hud-value { font-size: 25px; }
+  .fuse { top: 84px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shaft, .orb { animation: none; }
+  .ripple, .spark { display: none; }
+  .action { transition: none; }
+}

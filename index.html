@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Abyss — Fang das Licht</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="tank" id="tank">
+
+  <!-- Hintergrund: Lichtschleier aus der Tiefe -->
+  <div class="shaft shaft-a" aria-hidden="true"></div>
+  <div class="shaft shaft-b" aria-hidden="true"></div>
+
+  <!-- HUD: Werte während des Spiels -->
+  <header class="hud" id="hud">
+    <div class="hud-item">
+      <span class="hud-value" id="score">0</span>
+      <span class="hud-label">Punkte</span>
+    </div>
+    <div class="hud-item">
+      <span class="hud-value" id="level">1</span>
+      <span class="hud-label">Tiefe</span>
+    </div>
+    <div class="hud-item">
+      <span class="hud-value" id="last-time">—</span>
+      <span class="hud-label">letzte Reaktion</span>
+    </div>
+  </header>
+
+  <!-- Zeitbalken pro Ziel -->
+  <div class="fuse" id="fuse" aria-hidden="true"><span id="fuse-fill"></span></div>
+
+  <!-- Das Ziel -->
+  <button class="orb" id="orb" type="button" aria-label="Licht fangen"></button>
+
+  <!-- Startbildschirm -->
+  <div class="veil" id="veil-start">
+    <div class="veil-inner">
+      <h1>Abyss</h1>
+      <p class="lede">Ein Licht treibt durch die Tiefe. Fang es, bevor es dir entwischt.</p>
+      <ul class="rules">
+        <li>Klick auf das Licht, so schnell du kannst</li>
+        <li>Danebengeklickt oder zu langsam — Lauf vorbei</li>
+        <li>Jede Tiefenstufe treibt es schneller</li>
+      </ul>
+      <button class="action" id="btn-start" type="button">Tauchgang starten</button>
+    </div>
+  </div>
+
+  <!-- Endbildschirm -->
+  <div class="veil hidden" id="veil-end">
+    <div class="veil-inner">
+      <p class="verdict" id="verdict">Zu langsam</p>
+      <p class="final-score"><span id="final-score">0</span></p>
+      <p class="final-meta" id="final-meta"></p>
+
+      <section class="board">
+        <h2>Deine besten Tauchgänge</h2>
+        <ol id="board-list" class="board-list"></ol>
+      </section>
+
+      <button class="action" id="btn-again" type="button">Nochmal tauchen</button>
+    </div>
+  </div>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
