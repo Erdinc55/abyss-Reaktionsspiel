@@ -1,26 +1,16 @@
-/* ============================================================
-   Abyss — Fang das Licht
-   Ein Reaktionsspiel im Überlebensmodus.
-   ============================================================ */
-
-/* --- Einstellungen: hier kannst du das Spiel austarieren --- */
-
 const EINSTELLUNGEN = {
-  zeitProZiel: 2200,      // Millisekunden, die du pro Licht hast
-  startTempo: 95,         // Pixel pro Sekunde auf Tiefenstufe 1
-  tempoProStufe: 42,      // wie viel schneller es pro Stufe wird
-  faengeProStufe: 5,      // so viele Fänge bis zur nächsten Tiefenstufe
-  punkteBasis: 100,       // Grundpunkte pro Fang
+  zeitProZiel: 2200,      
+  startTempo: 95,        
+  tempoProStufe: 42,     
+  faengeProStufe: 5,      
+  punkteBasis: 100,      
   bestenlisteLaenge: 5,
-
-  startGroesse: 78,       // Durchmesser des Lichts in Pixeln zu Beginn
-  schrumpfProFang: 2.5,   // um so viele Pixel wird es pro Fang kleiner
-  minGroesse: 26          // kleiner als das wird es nie
+  startGroesse: 78,       
+  schrumpfProFang: 2.5,  
+  minGroesse: 26          
 };
 
 const SPEICHER_SCHLUESSEL = "abyss-bestenliste";
-
-/* --- Elemente aus dem HTML holen --- */
 
 const tank = document.getElementById("tank");
 const orb = document.getElementById("orb");
@@ -42,31 +32,25 @@ const boardList = document.getElementById("board-list");
 const btnStart = document.getElementById("btn-start");
 const btnAgain = document.getElementById("btn-again");
 
-/* --- Spielzustand --- */
-
 let laeuft = false;
 let punkte = 0;
 let stufe = 1;
 let faenge = 0;
 let reaktionszeiten = [];
 
-let pos = { x: 0, y: 0 };      // Position des Lichts
-let richtung = { x: 1, y: 1 }; // Bewegungsrichtung (normalisiert)
+let pos = { x: 0, y: 0 };      
+let richtung = { x: 1, y: 1 }; 
 let tempo = EINSTELLUNGEN.startTempo;
-let groesse = EINSTELLUNGEN.startGroesse; // aktueller Durchmesser des Lichts
+let groesse = EINSTELLUNGEN.startGroesse; 
 
 let zielErschienenUm = 0;
 let letzterFrame = 0;
 let animationsId = null;
 
-/* --- Hilfsfunktionen --- */
-
 function zufall(min, max) {
   return Math.random() * (max - min) + min;
 }
 
-// Schreibt Position und Größe ins CSS.
-// Wichtig: NICHT über transform, denn transform gehört der Puls-Animation.
 function orbZeichnen() {
   orb.style.width = groesse + "px";
   orb.style.height = groesse + "px";
@@ -74,12 +58,9 @@ function orbZeichnen() {
   orb.style.top = pos.y + "px";
 }
 
-// Setzt das Licht an eine zufällige Stelle mit zufälliger Richtung
 function neuesZielPlatzieren() {
   const maxX = tank.clientWidth - groesse;
   const maxY = tank.clientHeight - groesse;
-
-  // Der obere Bereich bleibt frei, damit das HUD nicht verdeckt wird
   const minY = 130;
 
   pos.x = zufall(0, Math.max(0, maxX));
@@ -96,23 +77,18 @@ function neuesZielPlatzieren() {
   zielErschienenUm = performance.now();
 }
 
-/* --- Die Animationsschleife: bewegt das Licht und prüft die Zeit --- */
-
 function schleife(jetzt) {
   if (!laeuft) return;
 
-  const delta = (jetzt - letzterFrame) / 1000; // Sekunden seit letztem Frame
+  const delta = (jetzt - letzterFrame) / 1000; 
   letzterFrame = jetzt;
 
   const maxX = tank.clientWidth - groesse;
   const maxY = tank.clientHeight - groesse;
   const minY = 130;
-
-  // Bewegen
   pos.x += richtung.x * tempo * delta;
   pos.y += richtung.y * tempo * delta;
 
-  // An den Rändern abprallen
   if (pos.x <= 0) { pos.x = 0; richtung.x *= -1; }
   if (pos.x >= maxX) { pos.x = maxX; richtung.x *= -1; }
   if (pos.y <= minY) { pos.y = minY; richtung.y *= -1; }
@@ -120,17 +96,13 @@ function schleife(jetzt) {
 
   orbZeichnen();
 
-  // Verbleibende Zeit als Balken anzeigen
   const vergangen = jetzt - zielErschienenUm;
   const anteil = Math.max(0, 1 - vergangen / EINSTELLUNGEN.zeitProZiel);
   fuseFill.style.transform = `scaleX(${anteil})`;
-
-  // Letztes Viertel: das Licht wechselt die Farbe
   if (anteil < 0.25) {
     orb.classList.add("panic");
   }
 
-  // Zeit abgelaufen -> Spielende
   if (vergangen >= EINSTELLUNGEN.zeitProZiel) {
     spielEnde("Das Licht ist entkommen");
     return;
@@ -139,7 +111,6 @@ function schleife(jetzt) {
   animationsId = requestAnimationFrame(schleife);
 }
 
-/* --- Effekte --- */
 
 function welleAn(x, y) {
   const welle = document.createElement("div");
@@ -168,8 +139,6 @@ function funkenAn(x, y) {
   }
 }
 
-/* --- Spielablauf --- */
-
 function spielStart() {
   laeuft = true;
   punkte = 0;
@@ -194,18 +163,15 @@ function spielStart() {
 }
 
 function lichtGefangen(event) {
-  event.stopPropagation(); // verhindert, dass der Klick als Fehlklick zählt
+  event.stopPropagation(); 
 
   const reaktion = Math.round(performance.now() - zielErschienenUm);
   reaktionszeiten.push(reaktion);
-
-  // Punkte: Grundwert plus Bonus für Schnelligkeit, mal Tiefenstufe
   const bonus = Math.max(0, EINSTELLUNGEN.zeitProZiel - reaktion);
   const gewinn = Math.round((EINSTELLUNGEN.punkteBasis + bonus / 10) * stufe);
   punkte += gewinn;
   faenge++;
 
-  // Tiefenstufe erhöhen
   if (faenge % EINSTELLUNGEN.faengeProStufe === 0) {
     stufe++;
     tempo = EINSTELLUNGEN.startTempo + (stufe - 1) * EINSTELLUNGEN.tempoProStufe;
@@ -215,13 +181,11 @@ function lichtGefangen(event) {
   levelEl.textContent = stufe;
   lastTimeEl.textContent = reaktion + " ms";
 
-  // Effekte noch an der alten Position und Größe auslösen
   const mitte = groesse / 2;
   funkenAn(pos.x + mitte, pos.y + mitte);
   tank.classList.add("caught");
   setTimeout(() => tank.classList.remove("caught"), 260);
 
-  // Das Licht wird mit jedem Fang ein Stück kleiner
   groesse = Math.max(
     EINSTELLUNGEN.minGroesse,
     groesse - EINSTELLUNGEN.schrumpfProFang
@@ -259,7 +223,6 @@ function spielEnde(grund) {
   veilEnd.classList.remove("hidden");
 }
 
-/* --- Bestenliste (bleibt im Browser gespeichert) --- */
 
 function bestenlisteLaden() {
   try {
@@ -279,10 +242,9 @@ function bestenlisteSpeichern(eintrag) {
   try {
     localStorage.setItem(SPEICHER_SCHLUESSEL, JSON.stringify(gekuerzt));
   } catch {
-    // Speichern nicht möglich (z. B. private Browser-Sitzung) — Spiel läuft trotzdem
   }
 
-  return gekuerzt.indexOf(eintrag); // -1, wenn der Lauf es nicht in die Liste geschafft hat
+  return gekuerzt.indexOf(eintrag);
 }
 
 function bestenlisteZeichnen(frischerPlatz) {
@@ -314,15 +276,12 @@ function bestenlisteZeichnen(frischerPlatz) {
   });
 }
 
-/* --- Ereignisse verbinden --- */
-
 orb.addEventListener("pointerdown", lichtGefangen);
 tank.addEventListener("pointerdown", fehlklick);
 
 btnStart.addEventListener("click", spielStart);
 btnAgain.addEventListener("click", spielStart);
 
-// Fenstergröße geändert: Licht zurück ins Bild holen
 window.addEventListener("resize", () => {
   if (!laeuft) return;
   pos.x = Math.max(0, Math.min(pos.x, tank.clientWidth - groesse));
