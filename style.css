@@ -27,7 +27,6 @@ body {
   -webkit-user-select: none;
 }
 
-/* --- Das Becken --- */
 
 .tank {
   position: relative;
@@ -41,7 +40,6 @@ body {
   cursor: crosshair;
 }
 
-/* Lichtschleier von oben */
 .shaft {
   position: absolute;
   top: -20%;
@@ -59,8 +57,6 @@ body {
   0%, 100% { transform: translateX(0) rotate(8deg); }
   50% { transform: translateX(28px) rotate(3deg); }
 }
-
-/* --- HUD --- */
 
 .hud {
   position: absolute;
@@ -103,8 +99,6 @@ body {
   color: var(--foam-dim);
 }
 
-/* --- Zeitbalken --- */
-
 .fuse {
   position: absolute;
   left: 50%;
@@ -131,8 +125,6 @@ body {
   border-radius: 3px;
 }
 
-/* --- Das Licht (Ziel) --- */
-
 .orb {
   position: absolute;
   top: 0;
@@ -140,8 +132,6 @@ body {
   width: 74px;
   height: 74px;
   padding: 0;
-  /* Position und Größe setzt script.js über left/top/width/height.
-     transform bleibt allein der Puls-Animation vorbehalten. */
   transition: width 0.25s ease, height 0.25s ease;
   border: none;
   border-radius: 50%;
@@ -157,7 +147,6 @@ body {
 
 .orb.live { display: block; }
 
-/* Kurz vor Ablauf wechselt das Licht die Farbe */
 .orb.panic {
   background: radial-gradient(circle at 36% 32%, #ffffff 0%, var(--magenta) 38%, rgba(255, 95, 162, 0.15) 72%, transparent 76%);
   box-shadow:
@@ -170,8 +159,6 @@ body {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.08); }
 }
-
-/* --- Effekte: Welle beim Klick, Funken beim Fang --- */
 
 .ripple {
   position: absolute;
@@ -202,7 +189,6 @@ body {
   to { transform: translate(var(--dx), var(--dy)) scale(0.2); opacity: 0; }
 }
 
-/* Kurzer Blitz beim Fang */
 .tank.caught::after {
   content: "";
   position: absolute;
@@ -216,8 +202,6 @@ body {
 @keyframes flash {
   to { opacity: 0; }
 }
-
-/* --- Overlays --- */
 
 .veil {
   position: absolute;
@@ -289,8 +273,6 @@ h1 {
   background: var(--cyan);
   box-shadow: 0 0 8px var(--cyan);
 }
-
-/* Endbildschirm */
 
 .verdict {
   margin: 0 0 4px;
@@ -379,8 +361,6 @@ h1 {
   color: var(--foam-dim);
 }
 
-/* --- Buttons --- */
-
 .action {
   font-family: 'Outfit', sans-serif;
   font-size: 16px;
@@ -405,8 +385,6 @@ h1 {
   outline: 2px solid var(--amber);
   outline-offset: 3px;
 }
-
-/* --- Kleinere Bildschirme --- */
 
 @media (max-width: 520px) {
   .hud { gap: 24px; padding: 20px 12px; }
