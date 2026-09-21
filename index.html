@@ -8,9 +8,20 @@
 </head>
 <body>
 
+<button class="ton-schalter" id="ton" type="button"
+        aria-pressed="false" aria-label="Ton einschalten">
+  <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+    <path class="lautsprecher" d="M4 9h4l5-4v14l-5-4H4z" />
+    <path class="wellen" d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" />
+    <path class="kreuz" d="M16 9l5 6M21 9l-5 6" />
+  </svg>
+</button>
+
 <div class="tank" id="tank">
+
   <div class="shaft shaft-a" aria-hidden="true"></div>
   <div class="shaft shaft-b" aria-hidden="true"></div>
+
   <header class="hud" id="hud">
     <div class="hud-item">
       <span class="hud-value" id="score">0</span>
@@ -24,6 +35,10 @@
       <span class="hud-value" id="last-time">—</span>
       <span class="hud-label">letzte Reaktion</span>
     </div>
+    <div class="hud-item">
+      <span class="hud-value" id="spare">2</span>
+      <span class="hud-label">Streifer frei</span>
+    </div>
   </header>
 
   <div class="fuse" id="fuse" aria-hidden="true"><span id="fuse-fill"></span></div>
@@ -36,7 +51,8 @@
       <p class="lede">Ein Licht treibt durch die Tiefe. Fang es, bevor es dir entwischt.</p>
       <ul class="rules">
         <li>Klick auf das Licht, so schnell du kannst</li>
-        <li>Danebengeklickt oder zu langsam — Lauf vorbei</li>
+        <li>Zu langsam oder weit daneben — Lauf vorbei</li>
+        <li>Knapp daneben verzeiht es dir zweimal</li>
         <li>Jede Tiefenstufe treibt es schneller</li>
       </ul>
       <button class="action" id="btn-start" type="button">Tauchgang starten</button>
